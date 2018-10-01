@@ -1,3 +1,4 @@
+import os
 import json
 import numpy as np
 import tensorflow as tf
@@ -21,13 +22,16 @@ def createModel():
                   metrics=['accuracy'])
     return model
 
-ROOT_PATH = 'E:\GitHub\Belgian Traffic Signs'
-images28, labels = loadJSON(ROOT_PATH + '\Data\\train.txt')
+DATA_PATH = 'E:\GitHub\Belgian Traffic Signs\Data'
+train_data_path = os.path.join(DATA_PATH,'train.txt')
+images28, labels = loadJSON(train_data_path)
 
-checkpoint_path = ROOT_PATH + '\Model\cp-{epoch:04d}.ckpt'
+MODEL_PATH = 'E:\GitHub\Belgian Traffic Signs\Model'
+checkpoint_path = os.path.join(MODEL_PATH,'cp-{epoch:04d}.ckpt')
 cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path, 
                                                  save_weights_only=True,
                                                  verbose=1, period=5)
 model = createModel()
 model.fit(images28, labels, epochs=25, callbacks = [cp_callback])
-model.save(ROOT_PATH + '\Model\my_model.h5')
+model_path = os.path.join(MODEL_PATH,'my_model.h5')
+model.save(model_path)

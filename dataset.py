@@ -32,9 +32,9 @@ def saveJSON(file,images,labels):
     with open (file,'w') as json_file:
         json.dump(jsonData, json_file, indent=4)
 
-ROOT_PATH = 'E:\GitHub\Belgian Traffic Signs'
-train_data_directory = ROOT_PATH + '\Data\Training'
-test_data_directory = ROOT_PATH + '\Data\Testing'
+DATA_PATH = 'E:\GitHub\Belgian Traffic Signs\Data'
+train_data_directory = os.path.join(DATA_PATH,'Training')
+test_data_directory = os.path.join(DATA_PATH,'Testing')
 
 images, labels = loadData(train_data_directory)
 test_images, test_labels = loadData(test_data_directory)
@@ -42,5 +42,5 @@ test_images, test_labels = loadData(test_data_directory)
 images28 = convertData(images)
 test_images28 = convertData(test_images)
 
-saveJSON(ROOT_PATH + '\Data\\train.txt',images28,labels)
-saveJSON(ROOT_PATH + '\Data\\test.txt',test_images28,test_labels)
+saveJSON(os.path.join(DATA_PATH,'train.txt'),images28,labels)
+saveJSON(os.path.join(DATA_PATH,'test.txt'),test_images28,test_labels)

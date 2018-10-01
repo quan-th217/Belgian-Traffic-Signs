@@ -1,3 +1,4 @@
+import os
 import json
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,10 +38,12 @@ def showImages(predictions,labels):
         plt.imshow(test_images28[k],  cmap="gray")
     plt.show()
 
-ROOT_PATH = 'E:\GitHub\Belgian Traffic Signs'
-test_images28, test_labels = loadJSON(ROOT_PATH + '\Data\\test.txt')
+DATA_PATH = 'E:\GitHub\Belgian Traffic Signs\Data'
+test_data_path = os.path.join(DATA_PATH,'test.txt')
+test_images28, test_labels = loadJSON(test_data_path)
 
-model_path = ROOT_PATH + '\Model\my_model.h5'
+MODEL_PATH = 'E:\GitHub\Belgian Traffic Signs\Model'
+model_path = os.path.join(MODEL_PATH,'my_model.h5')
 model = createModel()
 model.load_weights(model_path)
 
