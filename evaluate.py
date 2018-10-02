@@ -43,7 +43,7 @@ test_data_path = os.path.join(DATA_PATH,'test.txt')
 test_images28, test_labels = loadJSON(test_data_path)
 
 MODEL_PATH = 'E:\GitHub\Belgian Traffic Signs\Model'
-model_path = os.path.join(MODEL_PATH,'my_model.h5')
+model_path = os.path.join(MODEL_PATH,'cp-0030.ckpt')
 model = createModel()
 model.load_weights(model_path)
 

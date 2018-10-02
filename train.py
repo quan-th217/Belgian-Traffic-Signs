@@ -3,6 +3,8 @@ import json
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 
 def loadJSON(file):
     with open(file) as json_file:
@@ -22,16 +24,36 @@ def createModel():
                   metrics=['accuracy'])
     return model
 
+def trainingGraph(history):
+    acc = history.history['acc']
+    val_acc = history.history['val_acc']
+    epochs = range(1, len(acc) + 1)    
+    plt.plot(epochs, acc, 'bo', label='Training acc')
+    plt.plot(epochs, val_acc, 'b', label='Validation acc')
+    plt.title('Training and validation accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()    
+    plt.show()
+
 DATA_PATH = 'E:\GitHub\Belgian Traffic Signs\Data'
 train_data_path = os.path.join(DATA_PATH,'train.txt')
 images28, labels = loadJSON(train_data_path)
 
+images_train, images_val, labels_train, labels_val = train_test_split(images28, labels,
+                                                                      random_state = 0)
 MODEL_PATH = 'E:\GitHub\Belgian Traffic Signs\Model'
 checkpoint_path = os.path.join(MODEL_PATH,'cp-{epoch:04d}.ckpt')
 cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path, 
                                                  save_weights_only=True,
                                                  verbose=1, period=5)
 model = createModel()
-model.fit(images28, labels, epochs=25, callbacks = [cp_callback])
+history = model.fit(images_train, labels_train,
+                    epochs = 30,
+                    validation_data=(images_val, labels_val),
+                    callbacks = [cp_callback])
+
 model_path = os.path.join(MODEL_PATH,'my_model.h5')
 model.save(model_path)
+
+trainingGraph(history)
