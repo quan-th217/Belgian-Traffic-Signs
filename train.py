@@ -41,17 +41,19 @@ train_data_path = os.path.join(DATA_PATH,'train.txt')
 images28, labels = loadJSON(train_data_path)
 
 images_train, images_val, labels_train, labels_val = train_test_split(images28, labels,
+                                                                      test_size = 0.2,
                                                                       random_state = 0)
 MODEL_PATH = 'E:\GitHub\Belgian Traffic Signs\Model'
 checkpoint_path = os.path.join(MODEL_PATH,'cp-{epoch:04d}.ckpt')
 cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path, 
                                                  save_weights_only=True,
                                                  verbose=1, period=5)
+es_callback = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
 model = createModel()
 history = model.fit(images_train, labels_train,
-                    epochs = 30,
+                    epochs = 200,
                     validation_data=(images_val, labels_val),
-                    callbacks = [cp_callback])
+                    callbacks = [es_callback,cp_callback])
 
 model_path = os.path.join(MODEL_PATH,'my_model.h5')
 model.save(model_path)
