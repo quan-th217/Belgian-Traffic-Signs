@@ -38,15 +38,19 @@ def showImages(predictions,labels):
         plt.imshow(test_images28[k],  cmap="gray")
     plt.show()
 
-DATA_PATH = 'E:\GitHub\Belgian Traffic Signs\Data'
+# Load and prepare data
+DATA_PATH = 'Data'
 test_data_path = os.path.join(DATA_PATH,'test.txt')
 test_images28, test_labels = loadJSON(test_data_path)
+test_images28 = test_images28/256
 
-MODEL_PATH = 'E:\GitHub\Belgian Traffic Signs\Model'
+# Load model
+MODEL_PATH = 'Model'
 model_path = os.path.join(MODEL_PATH,'my_model.h5')
 model = createModel()
 model.load_weights(model_path)
 
+# Evaluate the model
 test_loss, test_acc = model.evaluate(test_images28, test_labels)
 print('Test accuracy:', test_acc)
 
