@@ -15,7 +15,14 @@ def loadJSON(file):
 
 def createModel():
     model = keras.Sequential([
-        keras.layers.Flatten(input_shape=(28, 28)),
+        keras.layers.Conv2D(30, kernel_size=(3, 3),
+                            strides=2,
+                            activation=tf.nn.relu,
+                            input_shape=(28, 28, 1)),
+        keras.layers.Dropout(0.5),
+        keras.layers.Conv2D(30, kernel_size=(3, 3), strides=2, activation=tf.nn.relu),
+        keras.layers.Dropout(0.5),
+        keras.layers.Flatten(),
         keras.layers.Dense(128, activation=tf.nn.relu),
         keras.layers.Dense(62, activation=tf.nn.softmax)
     ])
@@ -41,29 +48,26 @@ DATA_PATH = 'Data'
 train_data_path = os.path.join(DATA_PATH,'train.txt')
 images28, labels = loadJSON(train_data_path)
 images28 = images28/256
+images28 = images28.reshape(len(images28),28,28,1)
 
 images_train, images_val, labels_train, labels_val = train_test_split(images28, labels,
                                                                       test_size = 0.2,
                                                                       random_state = 0)
 # Prepare the callbacks for the model
 MODEL_PATH = 'Model'
-checkpoint_path = os.path.join(MODEL_PATH,'cp-{epoch:04d}.ckpt')
+checkpoint_path = os.path.join(MODEL_PATH,'cnn2-cp-{epoch:04d}.ckpt')
 cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path,
                                                  monitor='val_loss',
                                                  save_best_only=True,
                                                  save_weights_only=True,
                                                  verbose=1)
-es_callback = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
 
 # Create, train and save the model
 model = createModel()
 history = model.fit(images_train, labels_train,
-                    epochs = 200,
+                    epochs = 50,
                     validation_data=(images_val, labels_val),
-                    callbacks = [es_callback,cp_callback])
-
-model_path = os.path.join(MODEL_PATH,'my_model.h5')
-model.save(model_path)
+                    callbacks = [cp_callback])
 
 #
 trainingGraph(history)

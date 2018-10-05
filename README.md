@@ -12,4 +12,5 @@ The dataset can be downloaded from [here](https://btsd.ethz.ch/shareddata/):
 3. Run evaluate.py to use the trained model with the test data
 
 ## Other files
-- trainCNN.py & evaluateCNN.py: training and testing a CNN neural network
+- trainCNN.py & evaluateCNN.py: training and testing a convolutional neural network (CNN)
+- trainCNN2.py & evaluateCNN2.py: training and testing a CNN with strides and dropout

@@ -15,7 +15,14 @@ def loadJSON(file):
 
 def createModel():
     model = keras.Sequential([
-        keras.layers.Flatten(input_shape=(28, 28)),
+        keras.layers.Conv2D(30, kernel_size=(3, 3),
+                            strides=2,
+                            activation=tf.nn.relu,
+                            input_shape=(28, 28, 1)),
+        keras.layers.Dropout(0.5),
+        keras.layers.Conv2D(30, kernel_size=(3, 3), strides=2, activation=tf.nn.relu),
+        keras.layers.Dropout(0.5),
+        keras.layers.Flatten(),
         keras.layers.Dense(128, activation=tf.nn.relu),
         keras.layers.Dense(62, activation=tf.nn.softmax)
     ])
@@ -24,7 +31,7 @@ def createModel():
                   metrics=['accuracy'])
     return model
 
-def showImages(predictions, images, labels):    
+def showImages(predictions,images, labels):    
     plt.figure(figsize=(10, 10))
     for i in range(10):
         k = randint(0,2500)
@@ -43,16 +50,17 @@ DATA_PATH = 'Data'
 test_data_path = os.path.join(DATA_PATH,'test.txt')
 test_images28, test_labels = loadJSON(test_data_path)
 test_images28 = test_images28/256
+test_images28_wChannel = test_images28.reshape(len(test_images28),28,28,1)
 
 # Load model
 MODEL_PATH = 'Model'
-model_path = os.path.join(MODEL_PATH,'my_model.h5')
+model_path = os.path.join(MODEL_PATH,'cnn2-cp-0047.ckpt')
 model = createModel()
 model.load_weights(model_path)
 
 # Evaluate the model
-test_loss, test_acc = model.evaluate(test_images28, test_labels)
+test_loss, test_acc = model.evaluate(test_images28_wChannel, test_labels)
 print('Test accuracy:', test_acc)
 
-predictions = model.predict(test_images28)
+predictions = model.predict(test_images28_wChannel)
 showImages(predictions, test_images28, test_labels)
