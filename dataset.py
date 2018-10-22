@@ -3,7 +3,8 @@ import numpy as np
 from skimage import data
 from skimage import transform
 from skimage.color import rgb2gray
-import json
+
+import json_data as js
 
 def loadData(data_directory):
     directories = [d for d in os.listdir(data_directory) 
@@ -28,13 +29,6 @@ def convertData(images):
     images28 = images28.astype(int)
     return images28
 
-def saveJSON(file,images,labels):
-    jsonData = {}
-    jsonData['data'] = images.tolist()
-    jsonData['label'] = labels
-    with open (file,'w') as json_file:
-        json.dump(jsonData, json_file, indent=4)
-
 # Load, resize and convert the images to grayscale
 DATA_PATH = 'Data'
 train_data_directory = os.path.join(DATA_PATH,'Training')
@@ -46,6 +40,6 @@ test_images, test_labels = loadData(test_data_directory)
 images28 = convertData(images)
 test_images28 = convertData(test_images)
 
-#
-saveJSON(os.path.join(DATA_PATH,'train.txt'),images28,labels)
-saveJSON(os.path.join(DATA_PATH,'test.txt'),test_images28,test_labels)
+# Save processed data to JSON files
+js.save(os.path.join(DATA_PATH,'train.txt'),images28,labels)
+js.save(os.path.join(DATA_PATH,'test.txt'),test_images28,test_labels)

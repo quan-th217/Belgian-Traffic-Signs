@@ -1,18 +1,11 @@
 import os
-import json
-import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from simple_nn import SimpleNN
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
-def loadJSON(file):
-    with open(file) as json_file:
-        jsonData = json.load(json_file)
-        images = np.array(jsonData['data'])
-        labels = jsonData['label']
-    return images, labels
+import json_data as js
+from simple_nn import SimpleNN as nn
 
 def trainingGraph(history):
     acc = history.history['acc']
@@ -34,7 +27,7 @@ def trainingGraph(history):
 # Load and prepare data
 DATA_PATH = 'Data'
 train_data_path = os.path.join(DATA_PATH,'train.txt')
-images28, labels = loadJSON(train_data_path)
+images28, labels = js.load(train_data_path)
 images28 = images28/256
 
 images_train, images_val, labels_train, labels_val = train_test_split(images28, labels,
@@ -51,14 +44,10 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path,
 es_callback = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
 
 # Create, train and save the model
-model = SimpleNN.buildModel()
+model = nn.buildModel()
 history = model.fit(images_train, labels_train,
                     epochs = 200,
                     validation_data=(images_val, labels_val),
                     callbacks = [es_callback,cp_callback])
 
-model_path = os.path.join(MODEL_PATH,'my_model.h5')
-model.save(model_path)
-
-#
 trainingGraph(history)

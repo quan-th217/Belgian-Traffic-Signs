@@ -1,34 +1,12 @@
 import os
-import json
 import numpy as np
 import matplotlib.pyplot as plt
-import tensorflow as tf
-from tensorflow import keras
 from random import randint
 
-def loadJSON(file):
-    with open(file) as json_file:
-        jsonData = json.load(json_file)
-        images = np.array(jsonData['data'])
-        labels = jsonData['label']
-    return images, labels
+import json_data as js
+from simple_cnn import SimpleCNN as nn
 
-def createModel():
-    model = keras.Sequential([
-        keras.layers.Conv2D(20, kernel_size=(3, 3),
-                            activation=tf.nn.relu,
-                            input_shape=(28, 28, 1)),
-        keras.layers.Conv2D(20, kernel_size=(3, 3), activation=tf.nn.relu),
-        keras.layers.Flatten(),
-        keras.layers.Dense(128, activation=tf.nn.relu),
-        keras.layers.Dense(62, activation=tf.nn.softmax)
-    ])
-    model.compile(optimizer=tf.train.AdamOptimizer(), 
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
-    return model
-
-def showImages(predictions,labels):    
+def showImages(predictions, images, labels):    
     plt.figure(figsize=(10, 10))
     for i in range(10):
         k = randint(0,2500)
@@ -39,20 +17,20 @@ def showImages(predictions,labels):
         color='green' if truth == prediction else 'red'
         plt.text(40, 10, "Truth:        {0}\nPrediction: {1}".format(truth, prediction), 
                  fontsize=12, color=color)
-        plt.imshow(test_images28[k],  cmap="gray")  # global variables?
+        plt.imshow(images[k],  cmap="gray")
     plt.show()
 
 # Load and prepare data
 DATA_PATH = 'Data'
 test_data_path = os.path.join(DATA_PATH,'test.txt')
-test_images28, test_labels = loadJSON(test_data_path)
+test_images28, test_labels = js.load(test_data_path)
 test_images28 = test_images28/256
 test_images28_wChannel = test_images28.reshape(len(test_images28),28,28,1)
 
 # Load model
 MODEL_PATH = 'Model'
-model_path = os.path.join(MODEL_PATH,'cnn-cp-0020.ckpt')
-model = createModel()
+model_path = os.path.join(MODEL_PATH,'cnn-cp-0008.ckpt')
+model = nn.buildModel()
 model.load_weights(model_path)
 
 # Evaluate the model
@@ -60,4 +38,4 @@ test_loss, test_acc = model.evaluate(test_images28_wChannel, test_labels)
 print('Test accuracy:', test_acc)
 
 predictions = model.predict(test_images28_wChannel)
-showImages(predictions,test_labels)
+showImages(predictions, test_images28, test_labels)

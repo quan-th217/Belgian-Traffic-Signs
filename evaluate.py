@@ -1,16 +1,10 @@
 import os
-import json
 import numpy as np
 import matplotlib.pyplot as plt
-from simple_nn import SimpleNN
 from random import randint
 
-def loadJSON(file):
-    with open(file) as json_file:
-        jsonData = json.load(json_file)
-        images = np.array(jsonData['data'])
-        labels = jsonData['label']
-    return images, labels
+import json_data as js
+from simple_nn import SimpleNN as nn
 
 def showImages(predictions, images, labels):    
     plt.figure(figsize=(10, 10))
@@ -29,13 +23,13 @@ def showImages(predictions, images, labels):
 # Load and prepare data
 DATA_PATH = 'Data'
 test_data_path = os.path.join(DATA_PATH,'test.txt')
-test_images28, test_labels = loadJSON(test_data_path)
+test_images28, test_labels = js.load(test_data_path)
 test_images28 = test_images28/256
 
 # Load model
 MODEL_PATH = 'Model'
-model_path = os.path.join(MODEL_PATH,'my_model.h5')
-model = SimpleNN.buildModel()
+model_path = os.path.join(MODEL_PATH,'cp-0038.ckpt')
+model = nn.buildModel()
 model.load_weights(model_path)
 
 # Evaluate the model
