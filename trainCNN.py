@@ -31,13 +31,17 @@ def createModel():
 def trainingGraph(history):
     acc = history.history['acc']
     val_acc = history.history['val_acc']
-    epochs = range(1, len(acc) + 1)    
-    plt.plot(epochs, acc, 'bo', label='Training acc')
+    epochs = range(1, len(acc) + 1)
+    plt.figure(figsize=(10,6))
+    plt.plot(epochs, acc, 'r', label='Training acc')
     plt.plot(epochs, val_acc, 'b', label='Validation acc')
     plt.title('Training and validation accuracy')
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
-    plt.legend()    
+    plt.legend()   
+    plt.grid()
+    plt.xlim(left=0)
+    plt.ylim(0.5,1)
     plt.show()
 
 # Load and prepare data

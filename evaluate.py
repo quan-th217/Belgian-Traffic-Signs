@@ -2,8 +2,7 @@ import os
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-import tensorflow as tf
-from tensorflow import keras
+from simple_nn import SimpleNN
 from random import randint
 
 def loadJSON(file):
@@ -12,17 +11,6 @@ def loadJSON(file):
         images = np.array(jsonData['data'])
         labels = jsonData['label']
     return images, labels
-
-def createModel():
-    model = keras.Sequential([
-        keras.layers.Flatten(input_shape=(28, 28)),
-        keras.layers.Dense(128, activation=tf.nn.relu),
-        keras.layers.Dense(62, activation=tf.nn.softmax)
-    ])
-    model.compile(optimizer=tf.train.AdamOptimizer(), 
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
-    return model
 
 def showImages(predictions, images, labels):    
     plt.figure(figsize=(10, 10))
@@ -47,7 +35,7 @@ test_images28 = test_images28/256
 # Load model
 MODEL_PATH = 'Model'
 model_path = os.path.join(MODEL_PATH,'my_model.h5')
-model = createModel()
+model = SimpleNN.buildModel()
 model.load_weights(model_path)
 
 # Evaluate the model

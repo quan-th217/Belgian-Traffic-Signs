@@ -3,6 +3,7 @@ import json
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
+from simple_nn import SimpleNN
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
@@ -13,27 +14,21 @@ def loadJSON(file):
         labels = jsonData['label']
     return images, labels
 
-def createModel():
-    model = keras.Sequential([
-        keras.layers.Flatten(input_shape=(28, 28)),
-        keras.layers.Dense(128, activation=tf.nn.relu),
-        keras.layers.Dense(62, activation=tf.nn.softmax)
-    ])
-    model.compile(optimizer=tf.train.AdamOptimizer(), 
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
-    return model
-
 def trainingGraph(history):
     acc = history.history['acc']
     val_acc = history.history['val_acc']
-    epochs = range(1, len(acc) + 1)    
-    plt.plot(epochs, acc, 'bo', label='Training acc')
+    epochs = range(1, len(acc) + 1)
+    plt.figure(figsize=(10,6))
+    plt.plot(epochs, acc, 'r', label='Training acc')
     plt.plot(epochs, val_acc, 'b', label='Validation acc')
     plt.title('Training and validation accuracy')
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
-    plt.legend()    
+    plt.legend()   
+    plt.grid()
+    plt.xlim(left=0)
+    plt.ylim(0.5,1)
+    plt.savefig("trainingGraph.png")
     plt.show()
 
 # Load and prepare data
@@ -56,7 +51,7 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path,
 es_callback = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
 
 # Create, train and save the model
-model = createModel()
+model = SimpleNN.buildModel()
 history = model.fit(images_train, labels_train,
                     epochs = 200,
                     validation_data=(images_val, labels_val),
